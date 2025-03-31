@@ -1,0 +1,186 @@
+{% extends "base.html" %}
+
+{% block title %}Shopping Cart - E-Commerce Store{% endblock %}
+
+{% block content %}
+<div class="row">
+    <div class="col-md-8">
+        <div class="card">
+            <div class="card-header d-flex justify-content-between align-items-center">
+                <h5 class="mb-0"><i class="fas fa-shopping-cart me-2"></i>Shopping Cart</h5>
+                <span class="badge bg-primary">{{ cart_items|length }} items</span>
+            </div>
+            <div class="card-body">
+                {% if cart_items %}
+                <div class="table-responsive">
+                    <table class="table align-middle">
+                        <thead>
+                            <tr>
+                                <th>Product</th>
+                                <th>Price</th>
+                                <th>Quantity</th>
+                                <th>Total</th>
+                                <th></th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for item in cart_items %}
+                            <tr>
+                                <td>
+                                    <div class="d-flex align-items-center">
+                                        {% if item.product.image_url %}
+                                        <img src="{{ item.product.image_url }}" alt="{{ item.product.name }}" 
+                                             class="rounded me-3" style="width: 60px; height: 60px; object-fit: cover;">
+                                        {% else %}
+                                        <div class="rounded me-3 bg-light d-flex align-items-center justify-content-center" 
+                                             style="width: 60px; height: 60px;">
+                                            <i class="fas fa-box fa-2x text-muted"></i>
+                                        </div>
+                                        {% endif %}
+                                        <div>
+                                            <h6 class="mb-0">{{ item.product.name }}</h6>
+                                            <small class="text-muted">{{ item.product.category }}</small>
+                                        </div>
+                                    </div>
+                                </td>
+                                <td>${{ "%.2f"|format(item.product.price) }}</td>
+                                <td>
+                                    <div class="input-group" style="width: 120px;">
+                                        <button class="btn btn-outline-secondary btn-sm" type="button">-</button>
+                                        <input type="text" class="form-control text-center" value="{{ item.quantity }}">
+                                        <button class="btn btn-outline-secondary btn-sm" type="button">+</button>
+                                    </div>
+                                </td>
+                                <td>${{ "%.2f"|format(item.product.price * item.quantity) }}</td>
+                                <td>
+                                    <button class="btn btn-outline-danger btn-sm">
+                                        <i class="fas fa-trash"></i>
+                                    </button>
+                                </td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+                {% else %}
+                <div class="text-center py-5">
+                    <i class="fas fa-shopping-cart fa-3x text-muted mb-3"></i>
+                    <h4>Your cart is empty</h4>
+                    <p class="text-muted">Add some products to your cart to see them here.</p>
+                    <a href="{{ url_for('products') }}" class="btn btn-primary">
+                        <i class="fas fa-shopping-bag me-2"></i>Browse Products
+                    </a>
+                </div>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+
+    <div class="col-md-4">
+        <div class="card">
+            <div class="card-header">
+                <h5 class="mb-0"><i class="fas fa-receipt me-2"></i>Order Summary</h5>
+            </div>
+            <div class="card-body">
+                {% if cart_items %}
+                <div class="d-flex justify-content-between mb-2">
+                    <span>Subtotal</span>
+                    <span>${{ "%.2f"|format(total) }}</span>
+                </div>
+                <div class="d-flex justify-content-between mb-2">
+                    <span>Shipping</span>
+                    <span>Free</span>
+                </div>
+                <hr>
+                <div class="d-flex justify-content-between mb-3">
+                    <strong>Total</strong>
+                    <strong class="text-primary">${{ "%.2f"|format(total) }}</strong>
+                </div>
+                <button class="btn btn-primary w-100 mb-3">
+                    <i class="fas fa-lock me-2"></i>Proceed to Checkout
+                </button>
+                <div class="text-center">
+                    <small class="text-muted">
+                        <i class="fas fa-shield-alt me-1"></i>Secure Payment
+                    </small>
+                </div>
+                {% else %}
+                <div class="text-center py-3">
+                    <p class="text-muted mb-0">Add items to your cart to see the order summary</p>
+                </div>
+                {% endif %}
+            </div>
+        </div>
+
+        <div class="card mt-4">
+            <div class="card-body">
+                <h6 class="card-title mb-3">Why shop with us?</h6>
+                <div class="d-flex align-items-center mb-3">
+                    <i class="fas fa-truck text-primary me-3"></i>
+                    <div>
+                        <h6 class="mb-0">Free Shipping</h6>
+                        <small class="text-muted">On orders over $50</small>
+                    </div>
+                </div>
+                <div class="d-flex align-items-center mb-3">
+                    <i class="fas fa-undo text-primary me-3"></i>
+                    <div>
+                        <h6 class="mb-0">Easy Returns</h6>
+                        <small class="text-muted">30-day return policy</small>
+                    </div>
+                </div>
+                <div class="d-flex align-items-center">
+                    <i class="fas fa-shield-alt text-primary me-3"></i>
+                    <div>
+                        <h6 class="mb-0">Secure Payment</h6>
+                        <small class="text-muted">100% secure checkout</small>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+    .table th {
+        font-weight: 600;
+        color: #64748b;
+    }
+
+    .input-group .btn {
+        padding: 0.375rem 0.75rem;
+    }
+
+    .input-group .form-control {
+        text-align: center;
+        border-left: none;
+        border-right: none;
+    }
+
+    .card {
+        border: none;
+        box-shadow: 0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1);
+    }
+
+    .card-header {
+        background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+        color: white;
+        border: none;
+    }
+
+    .badge {
+        padding: 0.5rem 1rem;
+        font-weight: 500;
+    }
+
+    .btn-outline-danger {
+        border: none;
+        color: #ef4444;
+    }
+
+    .btn-outline-danger:hover {
+        background-color: #fee2e2;
+        color: #ef4444;
+    }
+</style>
+{% endblock %} 
